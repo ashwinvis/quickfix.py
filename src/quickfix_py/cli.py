@@ -9,6 +9,7 @@ import os
 import sys
 import functools
 import argparse
+import subprocess
 from traceback import extract_tb
 from contextlib import redirect_stdout
 
@@ -173,6 +174,31 @@ def main(args=None):
             outfile.close()
         return 1
     return 0
+
+
+def fc():
+    shell = os.getenv("SHELL")
+    cmd = "fc -ln -1"
+
+    if shell.endswith("bash"):
+        cmd = "set -o history;" + cmd
+        output = subprocess.check_output(["bash", "-ic", cmd])
+    elif shell.endswith("zsh"):
+        cmd = "setopt SHARE_HISTORY;" + cmd
+        output = subprocess.check_output(["zsh", "-ic", cmd])
+    else:
+        raise OSError("Cannot detect current shell.")
+
+    print(output)
+    return output
+
+
+def fuck():
+    return main(["--fuck", fc()])
+
+
+def fuckthemall():
+    return main(["--fuck", "--all", fc()])
 
 
 if __name__ == "__main__":
